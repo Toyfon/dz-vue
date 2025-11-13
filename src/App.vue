@@ -1,14 +1,26 @@
 <script setup lang="ts">
-  import Button from '@/button.vue'
+import Header from '@/components/header.vue'
+import Card from '@/components/card.vue'
+import { reactive } from 'vue'
 
-  const date = new Date();
+const cardData = reactive({ id: 1, original: 'Example', translation: 'Пример', rolled: false })
+
+function onRollup(id: number, rolled: boolean) {
+    if (cardData.id === id) {
+        cardData.rolled = rolled
+    }
+}
 </script>
 
 <template>
-    <main>
-        Сегодняшняя дата: {{ date.toDateString() }}
+    <main class="main">
+        <Header />
+        <Card v-bind="cardData" @rollup="onRollup" />
     </main>
-    <Button>Нажми меня</Button>
 </template>
 
-<style scoped></style>
+<style scoped>
+.main {
+    max-width: 1440px;
+}
+</style>
