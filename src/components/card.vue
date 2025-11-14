@@ -1,38 +1,47 @@
 <script setup lang="ts">
 import DismissIcon from '@/icons/dismiss-icon.vue'
 import DoneIcon from '@/icons/done-icon.vue'
+import type { Card, Status } from '@/data-contracts.ts'
+import { computed, ref } from 'vue'
 
-interface CardProps {
-    original: string
-    translation: string
-    rolled: boolean
-    id: number
-}
-
-const { original = '', translation = '', rolled = false, id } = defineProps<CardProps>()
+const props = defineProps<Card & { index: number }>()
 
 const emit = defineEmits<{
-    rollup: [id: number, rolled: boolean]
+    rollup: [word: string, status: Status]
 }>()
+
+const finishedStatus = ref<Omit<Status, 'pending'> | null>(null)
 
 const rollup = () => {
     console.log('rollup')
-    emit('rollup', id, !rolled)
+    emit('rollup', props.word, props.status)
 }
+
+const setFinishedStatus = (newStatus: Omit<Status, 'pending'>) => {
+    finishedStatus.value = newStatus
+    // emit('rollup', word, newStatus)
+}
+const showFlip = computed(() => props.state === 'closed' && props.status === 'pending' && !finishedStatus.value)
+const showActions = computed(() => props.state === 'opened' && props.status === 'pending' && !finishedStatus.value)
+const displayIndex = computed(() => props.index + 1)
 </script>
 
 <template>
-    <div class="card" @click="rollup" :class="{ flipped: rolled }">
+    <div class="card" @click="rollup" :class="{ flipped: state === 'opened' }">
         <div class="card_inner">
-            <div class="card_number">{{ id }}</div>
+            <div class="card_number">{{ displayIndex }}</div>
+            <div v-show="finishedStatus" class="finished-status">
+                <DoneIcon v-show="finishedStatus === 'success'" style="width: 48px; height: 48px;" />
+                <DismissIcon v-show="finishedStatus === 'fail'" style="width: 48px; height: 48px;" />
+            </div>
             <p class="main_text">
-                {{ rolled ? translation : original }}
+                {{ state === 'opened' ? translation : word }}
             </p>
-            <div v-if="!rolled" class="card_footer_text">Перевернуть</div>
-
-            <div class="answer_actions" v-else>
-                <DoneIcon />
-                <DismissIcon />
+            <div v-show="showFlip" class="card_footer_text">Перевернуть</div>
+            <div v-show="finishedStatus" class="card_footer_text">Завершить</div>
+            <div class="answer_actions" v-show="showActions">
+                <DoneIcon @click="setFinishedStatus('success')" />
+                <DismissIcon @click="setFinishedStatus('fail')" />
             </div>
         </div>
     </div>
@@ -53,6 +62,8 @@ const rollup = () => {
 }
 .card.flipped {
     transform: rotateY(180deg);
+
+
 }
 .card_inner {
     border: 1px solid #cce8ff;
@@ -108,5 +119,12 @@ const rollup = () => {
     transform: translateX(-50%);
     background: var(--color-white);
     padding: 0 4px;
+}
+
+.finished-status {
+    position: absolute;
+    top: -24px;
+    right: 50%;
+    transform: translateX(50%);
 }
 </style>
