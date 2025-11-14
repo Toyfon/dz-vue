@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import Score from '@/components/score.vue'
 
-const score = 100
+const props = defineProps<{
+    totalPoints: number
+}>()
 </script>
 
 <template>
     <header class="header">
         <h2 class="label_text">ЗАПОМНИ СЛОВО</h2>
-        <Score :score="score" />
+        <Score :score="props.totalPoints" />
     </header>
 </template>
 
