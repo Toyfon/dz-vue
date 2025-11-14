@@ -6,8 +6,8 @@ import CardsList from '@/components/cards-list.vue'
 
 const cards = ref<Card[]>([
     { word: 'Example', translation: 'Пример', state: 'closed', status: 'pending' },
-    { word: 'Test', translation: 'Тест', state: 'closed', status: 'pending' },
-    { word: 'Sample', translation: 'Образец', state: 'closed', status: 'pending' },
+    // { word: 'Test', translation: 'Тест', state: 'closed', status: 'pending' },
+    // { word: 'Sample', translation: 'Образец', state: 'closed', status: 'pending' },
 ])
 
 const totalPoints = ref<number>(0)
