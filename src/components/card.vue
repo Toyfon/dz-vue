@@ -1,48 +1,55 @@
 <script setup lang="ts">
 import DismissIcon from '@/icons/dismiss-icon.vue'
 import DoneIcon from '@/icons/done-icon.vue'
-import type { Card, Status } from '@/data-contracts.ts'
+import type { CardWithStatuses, Status } from '@/data-contracts.ts'
 import { computed, ref } from 'vue'
 
-const props = defineProps<Card & { index: number }>()
+const props = defineProps<CardWithStatuses & { index: number }>()
 
 const emit = defineEmits<{
     rollup: [word: string, status: Status]
+    setPoints: [word: string, points: number, status: Status]
 }>()
 
-const finishedStatus = ref<Omit<Status, 'pending'> | null>(null)
+const finishedStatus = ref<Status | null>(null)
 
 const rollup = () => {
-    console.log('rollup')
     emit('rollup', props.word, props.status)
 }
 
-const setFinishedStatus = (newStatus: Omit<Status, 'pending'>) => {
+const setFinishedStatus = (newStatus: Status) => {
     finishedStatus.value = newStatus
-    // emit('rollup', word, newStatus)
+    emit('setPoints', props.word, newStatus === 'success' ? 100 : -100, newStatus)
 }
-const showFlip = computed(() => props.state === 'closed' && props.status === 'pending' && !finishedStatus.value)
-const showActions = computed(() => props.state === 'opened' && props.status === 'pending' && !finishedStatus.value)
+const showFlip = computed(
+    () => props.state === 'closed' && props.status === 'pending' && !finishedStatus.value,
+)
+const showActions = computed(
+    () => props.state === 'opened' && props.status === 'pending' && !finishedStatus.value,
+)
 const displayIndex = computed(() => props.index + 1)
 </script>
 
 <template>
     <div class="card" @click="rollup" :class="{ flipped: state === 'opened' }">
+        <div class="card_number">{{ displayIndex }}</div>
+        <div v-show="finishedStatus" class="finished-status">
+            <DoneIcon v-show="finishedStatus === 'success'" style="width: 48px; height: 48px" />
+            <DismissIcon v-show="finishedStatus === 'fail'" style="width: 48px; height: 48px" />
+        </div>
         <div class="card_inner">
-            <div class="card_number">{{ displayIndex }}</div>
-            <div v-show="finishedStatus" class="finished-status">
-                <DoneIcon v-show="finishedStatus === 'success'" style="width: 48px; height: 48px;" />
-                <DismissIcon v-show="finishedStatus === 'fail'" style="width: 48px; height: 48px;" />
-            </div>
-            <p class="main_text">
-                {{ state === 'opened' ? translation : word }}
+            <p class="card_face card_face--front" v-if="state === 'closed'">
+                {{ word }}
             </p>
-            <div v-show="showFlip" class="card_footer_text">Перевернуть</div>
-            <div v-show="finishedStatus" class="card_footer_text">Завершить</div>
-            <div class="answer_actions" v-show="showActions">
-                <DoneIcon @click="setFinishedStatus('success')" />
-                <DismissIcon @click="setFinishedStatus('fail')" />
-            </div>
+            <p class="card_face card_face--back" v-else>
+                {{ translation }}
+            </p>
+        </div>
+        <div v-show="showFlip" class="card_footer_text">Перевернуть</div>
+        <div v-show="finishedStatus" class="card_footer_text">Завершить</div>
+        <div class="answer_actions" v-show="showActions">
+            <DismissIcon @click="setFinishedStatus('fail')" />
+            <DoneIcon @click="setFinishedStatus('success')" />
         </div>
     </div>
 </template>
@@ -57,14 +64,11 @@ const displayIndex = computed(() => props.index + 1)
     padding: 28px 19px;
     cursor: pointer;
     perspective: 1200px;
-    transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
-.card.flipped {
+.card.flipped .card_inner {
     transform: rotateY(180deg);
-
-
 }
+
 .card_inner {
     border: 1px solid #cce8ff;
     border-radius: 12px;
@@ -74,30 +78,50 @@ const displayIndex = computed(() => props.index + 1)
     align-items: center;
     justify-content: center;
     position: relative;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+
+    transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+    -webkit-transition: -webkit-transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
 }
 
 .card_number {
     position: absolute;
-    top: -8px;
-    left: 16px;
+    top: 22px;
+    left: 38px;
     font-weight: 400;
     font-size: 14px;
     text-align: center;
     width: 16px;
     height: 16px;
+    z-index: 2;
     background: var(--color-white);
 }
 
-.main_text {
+.card_face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     font-weight: 400;
     font-size: 18px;
     text-align: center;
     user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 19px;
+    box-sizing: border-box;
+}
+
+.card_face--back {
+    transform: rotateY(180deg);
 }
 
 .card_footer_text {
     position: absolute;
-    bottom: -9px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--color-white);
@@ -114,7 +138,7 @@ const displayIndex = computed(() => props.index + 1)
     display: flex;
     gap: 32px;
     align-items: center;
-    bottom: -12px;
+    bottom: 18px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--color-white);
@@ -123,7 +147,8 @@ const displayIndex = computed(() => props.index + 1)
 
 .finished-status {
     position: absolute;
-    top: -24px;
+    top: 4px;
+    z-index: 2;
     right: 50%;
     transform: translateX(50%);
 }
