@@ -1,48 +1,12 @@
-# weather
+## Получение `translation-api`
 
-This template should help get you started developing with Vue 3 in Vite.
+- Рекомендуется использовать релиз на GitHub или пакетный менеджер (если доступен).
+- Локальная сборка (пример, настройте под используемый язык/инструмент):
+    - клонируйте репозиторий
+    - перейдите в `translation-api`
+    - выполните сборку (примерные команды):
+        - macOS ARM64: `./build.sh darwin-arm64` или `make build TARGET=darwin-arm64`
+        - Linux x86_64: `./build.sh linux-x64` или `make build TARGET=linux-x64`
+    - результат помещается в `translation-api/` и не должен попадать в репозиторий — используйте релизы.
 
-## Recommended IDE Setup
-
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Если проект использует конкретный инструмент сборки, замените вышеуказанные команды на реальные инструкции.

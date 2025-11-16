@@ -34,3 +34,18 @@ coverage
 
 # Vitest
 __screenshots__/
+
+
+# локальные/генерируемые базы данных
+*.db
+**/*.db
+
+# бинарные исполняемые файлы
+*.exe
+*.dll
+*.so
+*.dylib
+*.bin
+*.app
+**/api-*
+translation-api/api-*
