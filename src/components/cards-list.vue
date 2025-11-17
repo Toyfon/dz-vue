@@ -31,7 +31,7 @@ console.log(cards)
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 16px;
+    row-gap: 16px;
     padding: 50px 64px;
 }
 </style>
