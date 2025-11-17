@@ -19,7 +19,7 @@ const rollup = () => {
 
 const setFinishedStatus = (newStatus: Status) => {
     finishedStatus.value = newStatus
-    emit('setPoints', props.word, newStatus === 'success' ? 100 : -100, newStatus)
+    emit('setPoints', props.word, newStatus === 'success' ? 10 : -4, newStatus)
 }
 const showFlip = computed(
     () => props.state === 'closed' && props.status === 'pending' && !finishedStatus.value,
@@ -31,7 +31,7 @@ const displayIndex = computed(() => props.index + 1)
 </script>
 
 <template>
-    <div class="card" @click="rollup" :class="{ flipped: state === 'opened' }">
+    <div class="card" @click="rollup" v-flipped="state === 'opened'">
         <div class="card_number">{{ displayIndex }}</div>
         <div v-show="finishedStatus" class="finished-status">
             <DoneIcon v-show="finishedStatus === 'success'" style="width: 48px; height: 48px" />
